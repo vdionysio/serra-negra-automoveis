@@ -15,8 +15,6 @@ CREATE TABLE car (
     model TEXT NOT NULL,
     year INTEGER NOT NULL,
     fuel_type TEXT NOT NULL,
-    doors INTEGER NOT NULL,
-    color TEXT NOT NULL,
     price INTEGER NOT NULL,
     FOREIGN KEY (owner_id) REFERENCES user (id)
 );
@@ -25,6 +23,5 @@ CREATE TABLE picture (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     car_id INTEGER NOT NULL,
     uri TEXT NOT NULL,
-    description TEXT,
     FOREIGN KEY (car_id) REFERENCES car (id) ON DELETE CASCADE
 );

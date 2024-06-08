@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block header %}
+    <h1>{% block title %}
+    Automóveis
+    {% endblock title %}</h1>
+    {% if g.user %}
+        <a class="action" href="#">Gerenciar Veículos</a>
+    {% else %}
+    {% endif %}
+{% endblock header %}
+
+{% block content %}
+    {% for car in cars %}
+    
+    {% endfor %}
+{% endblock content %}

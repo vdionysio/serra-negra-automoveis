@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block header %}
+    <h1>{% block title %}
+    Novo Automóvel
+    {% endblock title %}</h1>
+{% endblock header %}
+
+{% block content %}
+    <form method="post" enctype="multipart/form-data">
+        <label for="make">Marca</label>
+        <input name="make" id="make" value="{{ request.form['make'] }}" required>
+        <label for="model">Modelo</label>
+        <input name="model" id="model" value="{{ request.form['model'] }}" required>
+        <label for="year">Ano</label>
+        <input type="number" min="1940" max="2025" name="year" id="year" value="{{ request.form['year'] }}" required>
+        <label for="fuel_type">Combustível</label>
+        <input name="fuel_type" id="fuel_type" value="{{ request.form['fuel_type'] }}" required>
+        <label for="price">Preço</label>
+        <input name="price" id="price" value="{{ request.form['price'] }}" required>
+        <label for="pictures">Fotos</label>
+        <input type="file" name="pictures" id="pictures" multiple>
+        <button type="submit">Adicionar</button>
+    </form>
+{% endblock content %}
