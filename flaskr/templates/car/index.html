@@ -11,7 +11,16 @@
 {% endblock header %}
 
 {% block content %}
-    {% for car in cars %}
-    
-    {% endfor %}
+    <div class="card-deck">
+        {% for car in cars %}
+            <div class="card">
+                <img src="{{ url_for('uploaded_file', filename=car.pictures[0]) }}" class="card-img-top" alt="{{ car.model }}">
+                <div class="card-body">
+                <h5 class="card-title">{{ car.make }} {{ car.model }} {{ car.year }}</h5>
+                <p class="card-text">{{ car.price }}</p>
+                <p class="card-text"><small class="text-muted">{{ car.fuel_type }}</small></p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock content %}

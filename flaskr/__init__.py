@@ -1,15 +1,15 @@
 import os
-from flask import Flask
+from flask import Flask, send_from_directory
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
-        UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads'),
+        UPLOAD_FOLDER = os.path.join(app.root_path, 'uploads'),
         ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     )
-    print(os.path.join(app.instance_path, 'flaskr.sqlite'))
+
     if test_config is None:
         app.config.from_pyfile('config.py', silent=True)
     else:
@@ -17,13 +17,11 @@ def create_app(test_config=None):
 
     try:
         os.makedirs(app.instance_path)
+        os.makedirs(app.config['UPLOAD_FOLDER'])
+
     except OSError:
         pass
 
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
-        
     from . import db
 
     db.init_app(app)
@@ -35,4 +33,8 @@ def create_app(test_config=None):
     app.register_blueprint(car.bp)
     app.add_url_rule('/', endpoint='index')
 
+    @app.route('/uploads/<filename>')
+    def uploaded_file(filename):
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    
     return app

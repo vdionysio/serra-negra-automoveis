@@ -15,15 +15,32 @@ bp = Blueprint('car', __name__)
 @bp.route('/')
 def index():
     db = get_db()
-    cars = db.execute('''
+    rows = db.execute('''
         SELECT 
-            car.id, car.owner_id, car.make, car.model, car.year, car.fuel_type, 
-            car.price, 
-            picture.id, picture.uri
-        FROM car
-        LEFT JOIN picture ON car.id = picture.car_id
+            car.id, car.owner_id, car.make, car.model, car.year, car.fuel_type, car.price, GROUP_CONCAT(picture.uri) as pictures
+        FROM 
+            car
+        LEFT JOIN 
+            picture ON car.id = picture.car_id
+        GROUP BY
+            car.id
+        LIMIT 5;
     ''').fetchall()
-    print(cars)
+
+    cars = []
+    for row in rows:
+        pictures = row[7].split(',') if row[7] else []
+        cars.append({
+            'id': row[0],
+            'owner_id': row[1],
+            'make': row[2],
+            'model': row[3],
+            'year': row[4],
+            'fuel_type': row[5],
+            'price': row[6],
+            'pictures': pictures
+        })
+
     return render_template('car/index.html', cars=cars)
 
 @bp.route('/create', methods=('GET', 'POST'))
@@ -59,10 +76,10 @@ def create():
             )
             if pictures:
                 car_id = cursor.lastrowid
-                path_list = save_pictures(pictures, car_id)
+                picname_list = save_pictures(pictures, car_id)
                 
                 sql = 'INSERT INTO picture (car_id, uri) VALUES (?, ?)'
-                values = [(car_id, path) for path in path_list]
+                values = [(car_id, pic_name) for pic_name in picname_list]
                 db.executemany(sql, values)
             db.commit()
             return redirect(url_for('car.index'))
@@ -80,13 +97,13 @@ def save_pictures(pictures, car_id):
         if not allowed_file(pic.filename):
             raise TypeError("Formato inválido. Os formatos aceitos são png, jpg, jpeg, gif.")
 
-    path_list = []
+    picname_list = []
     for i in range(len(pictures)):
         ext = pictures[i].filename.rsplit('.', 1)[1].lower()
         pic_name = f'{car_id}_{i}.{ext}'
         path = os.path.join(current_app.config['UPLOAD_FOLDER'], pic_name)
         pictures[i].save(path)
-        path_list.append(path)
+        picname_list.append(pic_name)
         print(f'Saving {path}')
 
-    return path_list
+    return picname_list
