@@ -44,4 +44,4 @@ def create():
     
     return render_template('car/create.html')
 
-
+# def get_car(id):

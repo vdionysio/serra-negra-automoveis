@@ -1,6 +1,6 @@
 import os
 
-from flask import current_app
+from flask import current_app, abort
 from flaskr.db import get_db
 
 def get_cars():
@@ -32,6 +32,25 @@ def get_cars():
         })
 
     return cars
+
+def get_car(car_id):
+    db = get_db()
+    car = db.execute('''
+        SELECT 
+            car.id, car.owner_id, car.make, car.model, car.year, car.fuel_type, car.price, GROUP_CONCAT(picture.uri) as pictures
+        FROM 
+            car
+        LEFT JOIN 
+            picture ON car.id = picture.car_id
+        GROUP BY
+            car.id
+        WHERE car.id = ?
+    ''', car_id).fetchone()
+
+    if car is None:
+        abort(404, f'Carro de id {car_id} não encontrado')
+
+    return car
 
 def create_car(make, model, year, fuel_type, price, user_id, pictures):
     db = get_db()

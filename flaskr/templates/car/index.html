@@ -4,14 +4,10 @@
     <h1>{% block title %}
     Automóveis
     {% endblock title %}</h1>
-    {% if g.user %}
-        <a class="action" href="#">Gerenciar Veículos</a>
-    {% else %}
-    {% endif %}
 {% endblock header %}
 
 {% block content %}
-    <div class="card-deck">
+    <div class="card-deck" style="width: 18rem;">
         {% for car in cars %}
             <div class="card">
                 <img src="{{ url_for('uploaded_file', filename=car.pictures[0]) }}" class="card-img-top" alt="{{ car.model }}">
