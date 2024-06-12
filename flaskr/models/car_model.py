@@ -1,6 +1,6 @@
 import os
 
-from flask import current_app, abort
+from flask import current_app
 from flaskr.db import get_db
 
 def get_cars():
@@ -17,40 +17,26 @@ def get_cars():
         LIMIT 5;
     ''').fetchall()
 
-    cars = []
-    for row in rows:
-        pictures = row[7].split(',') if row[7] else []
-        cars.append({
-            'id': row[0],
-            'owner_id': row[1],
-            'make': row[2],
-            'model': row[3],
-            'year': row[4],
-            'fuel_type': row[5],
-            'price': row[6],
-            'pictures': pictures
-        })
+    cars = map(row_to_car, rows)
 
     return cars
 
 def get_car(car_id):
     db = get_db()
-    car = db.execute('''
+    row = db.execute('''
         SELECT 
             car.id, car.owner_id, car.make, car.model, car.year, car.fuel_type, car.price, GROUP_CONCAT(picture.uri) as pictures
         FROM 
             car
         LEFT JOIN 
             picture ON car.id = picture.car_id
+        WHERE 
+            car.id = ?
         GROUP BY
             car.id
-        WHERE car.id = ?
-    ''', car_id).fetchone()
-
-    if car is None:
-        abort(404, f'Carro de id {car_id} não encontrado')
-
-    return car
+    ''', (car_id,)).fetchone()
+    
+    return row_to_car(row)
 
 def create_car(make, model, year, fuel_type, price, user_id, pictures):
     db = get_db()
@@ -89,3 +75,16 @@ def save_pictures(pictures, car_id):
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
+
+def row_to_car(row):
+    pictures = row['pictures'].split(',') if row['pictures'] else []
+    return {
+        'id': row['id'],
+        'owner_id': row['owner_id'],
+        'make': row['make'],
+        'model': row['model'],
+        'year': row['year'],
+        'fuel_type': row['fuel_type'],
+        'price': row['price'],
+        'pictures': pictures
+    }

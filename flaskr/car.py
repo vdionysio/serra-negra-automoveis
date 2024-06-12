@@ -1,11 +1,11 @@
 import os
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for
+    Blueprint, flash, g, redirect, render_template, request, url_for, abort
 )
 
 from flaskr.auth import login_required
-from flaskr.models.car_model import get_cars, create_car
+from flaskr.models.car_model import get_cars, create_car, get_car
 
 bp = Blueprint('car', __name__)
 
@@ -14,6 +14,15 @@ def index():
     cars = get_cars()
 
     return render_template('car/index.html', cars=cars)
+
+@bp.route('/car/<int:car_id>')
+def car_details(car_id):
+    car = get_car(car_id)
+    print(car)
+    if car is None:
+        abort(404, f'Carro de id {car_id} não encontrado')
+
+    return render_template('car/car_details.html', car=car)
 
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
@@ -44,4 +53,5 @@ def create():
     
     return render_template('car/create.html')
 
-# def get_car(id):
+
+    
