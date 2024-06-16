@@ -8,18 +8,43 @@
 
 {% block content %}
     <form method="post" enctype="multipart/form-data">
-        <label for="make">Marca</label>
-        <input name="make" id="make" value="{{ request.form['make'] }}" required>
-        <label for="model">Modelo</label>
-        <input name="model" id="model" value="{{ request.form['model'] }}" required>
-        <label for="year">Ano</label>
-        <input type="number" min="1940" max="2025" name="year" id="year" value="{{ request.form['year'] }}" required>
-        <label for="fuel_type">Combustível</label>
-        <input name="fuel_type" id="fuel_type" value="{{ request.form['fuel_type'] }}" required>
-        <label for="price">Preço</label>
-        <input name="price" id="price" value="{{ request.form['price'] }}" required>
-        <label for="pictures">Fotos</label>
-        <input type="file" name="pictures" id="pictures" multiple>
-        <button type="submit">Adicionar</button>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="make">Marca</label>
+                <input class="form-control" name="make" id="make" value="{{ request.form['make'] }}" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="model">Modelo</label>
+                <input class="form-control" name="model" id="model" value="{{ request.form['model'] }}" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-4">
+                <label for="year">Ano</label>
+                <input class="form-control" type="number" min="1940" max="2025" name="year" id="year" value="{{ request.form['year']}}" required>
+            </div>
+            <div class="form-group col-8">
+                <label for="fuel_type">Combustível</label>
+                <select class="form-control" name="fuel_type" id="fuel_type" value="{{ request.form['fuel_type'] }}" required>
+                    <option>Gasolina</option>
+                    <option>Alcool</option>
+                    <option>Flex</option>
+                    <option>Diesel</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="price">Preço</label>
+            <input class="form-control" type="number" name="price" id="price" value="{{ request.form['price'] }}" required>
+        </div>
+
+        <div class="input-group mb-3">
+
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" name="pictures" id="pictures" multiple>
+                <label class="custom-file-label" for="pictures">Escolher fotos</label>
+            </div>
+        </div>
+        <button class="btn btn-success" type="submit">Adicionar</button>
     </form>
 {% endblock content %}

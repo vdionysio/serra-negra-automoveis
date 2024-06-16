@@ -2,7 +2,11 @@
 
 {% block header %}
     <h1>{% block title %}
-    Automóveis
+     {% if car %}
+     {{car.make}} {{car.model}} {{car.year}}
+     {% else %}
+     Loading
+     {% endif %}
     {% endblock title %}</h1>
 {% endblock header %}
 
@@ -10,22 +14,40 @@
     <div class="container">
         {% if car %}
         <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner">
-            {% for picture in  car.pictures %}
-            <div class="carousel-item {% if loop.index == 1 %} active {% endif %}">
-            <img class="d-block w-100" src="{{ url_for('uploaded_file', filename=picture) }}" alt="First slide">
+            <div class="carousel-inner">
+                {% for picture in  car.pictures %}
+                <div class="carousel-item {% if loop.index == 1 %} active {% endif %}">
+                    <img class="d-block w-100 carousel-image" src="{{ url_for('uploaded_file', filename=picture) }}" alt="First slide">
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
         </div>
-        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a>
+        <div class="card-body">
+            <h5 class="card-title">{{ car.make}} {{ car.model}} </h5>
+            <h6 class="card-subtitle">{{ car.year}} - {{ car.fuel_type }}</h6>
+            <p class="card-text">R$ {{ car.price }}</p>
+            <p class="card-text">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sit amet odio porta, viverra nunc vitae, commodo enim. Donec egestas magna eget leo rutrum, quis condimentum velit mollis.
+            </p>
+            <a href="#" class="btn btn-success">Tenho interesse!</a>
         </div>
+        {% if g.user %}
+            <div class="admin-options">
+                <a class="btn btn-primary" href="{{ url_for('car.edit', car_id=car.id) }}">Editar</a>
+                <form class="d-inline-block" action="{{ url_for('car.delete', id=car.id) }}" method="post">
+                    <input class="btn btn-danger" type="submit" value="Remover" onclick="return confirm('Are you sure?');">
+                </form>
+
+            </div>
+        {% endif %}
         {% else %}
             <div>
                 Loading

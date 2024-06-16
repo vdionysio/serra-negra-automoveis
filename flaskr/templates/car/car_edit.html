@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block header %}
+    <h1>{% block title %}
+    Editar - {{car.make}} {{car.model}} {{car.year}}
+    {% endblock title %}</h1>
+{% endblock header %}
+
+{% block content %}
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="make">Marca</label>
+                <input class="form-control" name="make" id="make" value="{{ request.form['make'] or car.make}}" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="model">Modelo</label>
+                <input class="form-control" name="model" id="model" value="{{ request.form['model'] or car.model}}" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-4">
+                <label for="year">Ano</label>
+                <input class="form-control" type="number" min="1940" max="2025" name="year" id="year" value="{{ request.form['year'] or car.year}}" required>
+            </div>
+            <div class="form-group col-8">
+                <label for="fuel_type">Combustível</label>
+                <select class="form-control" name="fuel_type" id="fuel_type" value="{{ request.form['fuel_type'] or car.fuel_type}}" required>
+                    <option>Gasolina</option>
+                    <option>Alcool</option>
+                    <option>Flex</option>
+                    <option>Diesel</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="price">Preço</label>
+            <input class="form-control" type="number" name="price" id="price" value="{{ request.form['price'] or car.price}}" required>
+        </div>
+        <div class="input-group mb-3">
+
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" name="pictures" id="pictures" multiple>
+                <label class="custom-file-label" for="pictures">Escolher novas fotos</label>
+            </div>
+        </div>
+        <div>
+            <label class="mr-sm-2" for="inlineFormCustomSelect">Deseja remover alguma imagem?</label>
+            {% for pic_name in car.pictures %}
+                <div class="my-2">
+                    <img class="rounded" style="width: 300px; display:inline-block" src="{{ url_for('uploaded_file', filename=pic_name) }}" alt="{{ car.model }}">
+                    <div class="form-check d-inline">
+                        <input class="form-check-input" type="checkbox" name="images" value="{{ pic_name}}" id="{{ pic_name }}">
+                        <label class="form-check-label" for="{{ pic_name }}">
+                            Remover
+                        </label>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <button class="btn btn-primary" type="submit">Atualizar</button>
+    </form>
+{% endblock content %}

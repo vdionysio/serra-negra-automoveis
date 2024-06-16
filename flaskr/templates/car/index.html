@@ -7,16 +7,18 @@
 {% endblock header %}
 
 {% block content %}
-    <div class="card-deck" style="width: 18rem;">
+    <div class="row" >
         {% for car in cars %}
-            <div class="card">
-                <img src="{{ url_for('uploaded_file', filename=car.pictures[0]) }}" class="card-img-top" alt="{{ car.model }}">
-                <div class="card-body">
-                <h5 class="card-title">{{ car.make }} {{ car.model }} {{ car.year }}</h5>
-                <p class="card-text">{{ car.price }}</p>
-                <p class="card-text"><small class="text-muted">{{ car.fuel_type }}</small></p>
+            <a class="card-clickable col-md-6" href="{{ url_for('car.car_details', car_id=car.id) }}">
+                <div class="card mb-4">
+                    <img src="{{ url_for('uploaded_file', filename=car.pictures[0]) }}" class="card-img-top" alt="{{ car.model }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ car.make }} {{ car.model }} {{ car.year }}</h5>
+                        <p class="card-text">{{ car.price }}</p>
+                        <p class="card-text"><small class="text-muted">{{ car.fuel_type }}</small></p>
+                    </div>  
                 </div>
-            </div>
+            </a>
         {% endfor %}
     </div>
 {% endblock content %}
