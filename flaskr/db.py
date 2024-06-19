@@ -5,30 +5,44 @@ import os
 
 def get_db():
     if 'db' not in g:
-        g.db = sqlite3.connect(
-            current_app.config['DATABASE'],
-            detect_types=sqlite3.PARSE_DECLTYPES
-        )
-        g.db.row_factory = sqlite3.Row
-
+        try:
+            g.db = sqlite3.connect(
+                current_app.config['DATABASE'],
+                detect_types=sqlite3.PARSE_DECLTYPES
+            )
+            g.db.row_factory = sqlite3.Row
+        except sqlite3.Error as e:
+            current_app.logger.error(f'Database connection error: {e}')
+            raise
     return g.db
 
 def close_db(e=None):
     db = g.pop('db', None)
 
     if db is not None:
-        db.close()
+        try:
+            db.close()
+        except sqlite3.Error as e:
+            current_app.logger.error(f'Error closing the database: {e}')
 
 def init_db():
     db = get_db()
-
-    with current_app.open_resource('schema.sql') as f:
-        db.executescript(f.read().decode('utf8'))
+    schema_path = os.path.join(current_app.root_path, 'schema.sql')
+    print(schema_path)
+    try:
+        with current_app.open_resource(schema_path) as f:
+            db.executescript(f.read().decode('utf8'))
+    except sqlite3.Error as e:
+        current_app.logger.error(f"Error initializing the database: {e}")
+        raise
 
 @click.command('init-db')
 def init_db_command():
-    init_db()
-    click.echo('Initialized the database')
+    try:
+        init_db()
+        click.echo('Initialized the database')
+    except Exception as e:
+        click.echo(f"Failed to initialize the database: {e}")
 
 def init_app(app):
     app.teardown_appcontext(close_db)
