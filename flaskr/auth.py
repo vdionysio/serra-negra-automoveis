@@ -1,8 +1,8 @@
 import functools
 from sqlite3 import IntegrityError
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
-from werkzeug.security import check_password_hash, generate_password_hash
-from flaskr.db import get_db
+from werkzeug.security import check_password_hash
+from flaskr.models.auth_model import register_user, get_user_by_id, get_user_by_username
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -80,23 +80,3 @@ def validate_login_form(data):
     if not data['password']:
         return 'Password is required.'
     return None
-
-def register_user(username, password):
-    db = get_db()
-    db.execute(
-        "INSERT INTO user (username, password) VALUES (?, ?)",
-        (username, generate_password_hash(password)),
-    )
-    db.commit()
-
-def get_user_by_username(username):
-    db = get_db()
-    return db.execute(
-        'SELECT * FROM user WHERE username = ?', (username,)
-    ).fetchone()
-
-def get_user_by_id(user_id):
-    db = get_db()
-    return db.execute(
-        'SELECT * FROM user WHERE id = ?', (user_id,)
-    ).fetchone()
