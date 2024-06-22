@@ -28,7 +28,6 @@ def close_db(e=None):
 def init_db():
     db = get_db()
     schema_path = os.path.join(current_app.root_path, 'schema.sql')
-    print(schema_path)
     try:
         with current_app.open_resource(schema_path) as f:
             db.executescript(f.read().decode('utf8'))
