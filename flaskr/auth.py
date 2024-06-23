@@ -34,8 +34,11 @@ def login():
 
         if error is None:
             user = get_user_by_username(form_data['username'])
+            print(f"TESTEEE {form_data['password']}")
+            print(check_password_hash(user['password'], form_data['password']))
             if user and check_password_hash(user['password'], form_data['password']):
                 session.clear()
+                print(f"USER ID {user['id']}")
                 session['user_id'] = user['id']
                 return redirect(url_for('index'))
             else:
