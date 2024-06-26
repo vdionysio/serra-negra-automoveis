@@ -20,7 +20,7 @@ def car_details(car_id):
 
     return render_template('car/car_details.html', car=car)
 
-@bp.route('/create', methods=('GET', 'POST'))
+@bp.route('/car/create', methods=('GET', 'POST'))
 @login_required
 def create():
     if request.method == 'POST':
@@ -56,9 +56,13 @@ def edit(car_id):
 
     return render_template('car/car_edit.html', car=car)
 
-@bp.route('/<int:id>/delete', methods=('POST',))
+@bp.route('/car/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
+    car = get_car(id)
+    if car is None:
+        abort(404, f'Carro de id {id} não encontrado')
+
     delete_car(id)
     return redirect(url_for('car.index'))
 

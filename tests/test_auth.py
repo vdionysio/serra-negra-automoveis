@@ -38,3 +38,9 @@ def test_login(client, auth):
         client.get('/')
         assert g.user['username'] == 'user1'
         assert session['user_id'] == 1
+
+def test_logout(client, auth):
+    auth.login()
+    with client:
+        auth.logout()
+        assert 'user_id' not in session

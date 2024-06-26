@@ -67,13 +67,10 @@ def edit_car(make, model, year, fuel_type, price, pictures, car_id):
 
 def delete_car(car_id):
     car = get_car(car_id)
-    if car:
-        db = get_db()
-        delete_images([pic for pic in car['pictures']])
-        db.execute('DELETE FROM car WHERE id = ?', (car_id,))
-        db.commit()
-        return True
-    return False
+    db = get_db()
+    delete_images([pic for pic in car['pictures']])
+    db.execute('DELETE FROM car WHERE id = ?', (car_id,))
+    db.commit()
 
 def save_pictures(pictures, car_id):
     picname_list = []

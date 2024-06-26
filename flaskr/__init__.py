@@ -10,10 +10,11 @@ def create_app(test_config=None):
     if test_config is None:
         app.config.from_object('flaskr.config.DevelopmentConfig')
         app.config.from_pyfile('config.py', silent=True)
+        app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'uploads')
+
     else:
         app.config.from_mapping(test_config)
 
-    app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'uploads')
     try:
         os.makedirs(app.instance_path, exist_ok=True)
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)

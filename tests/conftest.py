@@ -1,11 +1,10 @@
 import pytest
 import tempfile
 import os
-
+from pathlib import Path
 from flaskr import create_app
 from flaskr.db import init_db, get_db
 from flaskr.models.auth_model import register_user
-
 
 with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
     _data_sql = f.read().decode('utf8')
@@ -13,12 +12,16 @@ with open(os.path.join(os.path.dirname(__file__), 'data.sql'), 'rb') as f:
 @pytest.fixture
 def app():
     db_fd, db_path = tempfile.mkstemp()
+    upload_fd = tempfile.mkdtemp()
 
     app = create_app({
         'TESTING': True,
         'DATABASE': db_path,
-        'SECRET_KEY': 'dev'
+        'SECRET_KEY': 'dev',
+        'UPLOAD_FOLDER': upload_fd
     })
+
+    print("CONFIG " + str(app.config['UPLOAD_FOLDER']))
 
     with app.app_context():
         init_db()
@@ -48,7 +51,7 @@ class AuthActions(object):
             data = {'username': username, 'password': password}
         )
     def logout(self):
-        return self._client.geT('/auth/logout')
+        return self._client.get('/auth/logout')
 
 @pytest.fixture
 def auth(client):
